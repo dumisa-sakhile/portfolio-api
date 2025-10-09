@@ -108,6 +108,18 @@ app.use((err, req, res, next) => {
   });
 });
 
+// simple API key middleware
+app.use((req, res, next) => {
+  const key = req.headers['x-api-key'] || req.get('x-api-key');
+  if (!process.env.X_API_KEY) {
+    console.warn('X_API_KEY not set in env — bypassing API key check');
+    return next();
+  }
+  if (!key || key !== process.env.X_API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized: invalid API key' });
+  }
+  next();
+});
 
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
