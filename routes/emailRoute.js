@@ -136,12 +136,12 @@ const createEmailRouter = (resend, redis) => {
               <h1
                 style='color:#000000;font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
               >
-                0123456
+                ${code}
               </h1>
               <div
                 style='color:#868686;font-size:16px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
-                This code will expire in 10 minutes.
+                This code will expire in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.
               </div>
               <div
                 style='color:#000000;font-size:14px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
@@ -173,8 +173,7 @@ const createEmailRouter = (resend, redis) => {
       await redis.del(attemptsKey);
 
       const text = `Your verification code is: ${code}\n\nThis code expires in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.`;
-      const html = `
-    <!doctype html>
+      const html = `<!doctype html>
 <html>
   <body>
     <div
@@ -208,12 +207,12 @@ const createEmailRouter = (resend, redis) => {
               <h1
                 style='color:#000000;font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
               >
-                0123456
+                ${code}
               </h1>
               <div
                 style='color:#868686;font-size:16px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
-                This code will expire in 10 minutes.
+                This code will expire in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.
               </div>
               <div
                 style='color:#000000;font-size:14px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
