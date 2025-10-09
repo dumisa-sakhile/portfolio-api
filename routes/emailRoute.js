@@ -10,6 +10,14 @@ const createEmailRouter = (resend, redis) => {
   const RESEND_OTP_FROM = process.env.FROM_VERIFY || "verify@mail.sakhiledumisa.com";
 
   const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
+  // Simple HTML escape to safely embed user-provided text into templates
+  const escapeHtml = (unsafe = '') =>
+    String(unsafe)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
 
 
   
@@ -55,18 +63,82 @@ const createEmailRouter = (resend, redis) => {
       }
 
       // Sanitize inputs for safety (message should be plain text)
-      const cleanUserName = sanitizeHtml(userName, { allowedTags: [], allowedAttributes: {} }).trim();
-      const cleanMessage = sanitizeHtml(message, { allowedTags: [], allowedAttributes: {} }).trim();
+  const cleanUserName = sanitizeHtml(userName, { allowedTags: [], allowedAttributes: {} }).trim();
+  const cleanMessage = sanitizeHtml(message, { allowedTags: [], allowedAttributes: {} }).trim();
+  const cleanSentBy = sanitizeHtml(sentBy, { allowedTags: [], allowedAttributes: {} }).trim();
+
+  // escape for safe HTML embedding
+  const escapedUserName = escapeHtml(cleanUserName);
+  const escapedSentBy = escapeHtml(cleanSentBy);
 
       const subject = `New contact form message from ${cleanUserName}`;
       const textBody = `You have received a new message via the contact form from ${cleanUserName} <${sentBy}>:\n\n${cleanMessage}\n\nReply to: ${sentBy}`;
 
-      // Send plain-text email using Resend and set reply_to to the user's email
+      // Build a simple HTML email (sanitize and preserve line breaks)
+      const htmlMessage = escapeHtml(cleanMessage).replace(/\r\n|\r|\n/g, '<br>');
+
+      const html = `
+        <!doctype html>
+<html>
+  <body>
+    <div
+      style='background-color:#F2F5F7;color:#242424;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
+    >
+      <table
+        align="center"
+        width="100%"
+        style="margin:0 auto;max-width:600px;background-color:#FFFFFF;border-radius:12px"
+        role="presentation"
+        cellspacing="0"
+        cellpadding="0"
+        border="0"
+      >
+        <tbody>
+          <tr style="width:100%">
+            <td>
+              <div style="padding:24px 24px 8px 24px;text-align:left">
+                <img
+                  alt=""
+                  src="https://www.sakhiledumisa.com/favicon.ico"
+                  height="24"
+                  style="height:24px;outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%"
+                />
+              </div>
+              <h3
+                style='font-weight:bold;text-align:left;margin:0;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-size:20px;padding:32px 24px 0px 24px'
+              >
+                ${escapedUserName}
+              </h3>
+              <div
+                style='color:#474849;font-size:14px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:left;padding:8px 24px 16px 24px'
+              >
+                ${htmlMessage}
+              </div>
+              <div style="padding:16px 24px 16px 24px">
+                <hr
+                  style="width:100%;border:none;border-top:1px solid #EEEEEE;margin:0"
+                />
+              </div>
+              <div
+                style="color:#474849;font-size:12px;font-weight:normal;text-align:left;padding:4px 24px 24px 24px"
+              >
+                ${escapedSentBy} has emailed you.
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>`;
+
+      // Send HTML + plain-text email using Resend and set reply_to to the user's email
       const data = await resend.emails.send({
         from,
         to,
         subject,
         text: textBody,
+        html,
         reply_to: sentBy,
       });
 
