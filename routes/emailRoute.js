@@ -95,7 +95,14 @@ const createEmailRouter = (resend, redis) => {
         // generate and send without storing verification state
         const code = generateOtp();
         const text = `Your verification code is: ${code}\n\nThis code expires in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.`;
-        const html = `
+        
+
+        const data = await resend.emails.send({
+          from: RESEND_OTP_FROM,
+          to: email,
+          subject: "Your verification code",
+          text,
+          html : `
           <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
 <head>
@@ -273,9 +280,7 @@ text-decoration: none
 </table></div></div></td></tr></table>
 </td></tr></table>
 </td></tr></table></td></tr></table></div><div class="gmail-fix" style="display: none; white-space: nowrap; font: 15px courier; line-height: 0;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div></body>
-</html>`;
-
-        const data = await resend.emails.send({ from: RESEND_OTP_FROM, to: email, subject: "Your verification code", text, html });
+</html>`});
         return res.status(200).json({ message: "OTP sent (no redis)", data, code });
       }
 
