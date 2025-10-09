@@ -144,7 +144,7 @@ const createEmailRouter = (resend, redis) => {
 
       // After successfully sending the contact email, send a thank-you email to the user
       const thankFrom = process.env.FROM_CONTACT || from;
-      const thankSubject = `Thanks for contacting TrailerBase, ${cleanUserName}`;
+      const thankSubject = `Thanks for your message, ${cleanUserName}`;
       const thankText = `Hi ${cleanUserName},\n\nThanks for reaching out — we've received your message and will get back to you shortly.\n\nReply to: ${to}`;
       const currentYear = new Date().getFullYear();
       const thankHtml = `<!doctype html>
