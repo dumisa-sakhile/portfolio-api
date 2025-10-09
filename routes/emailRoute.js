@@ -1,0 +1,170 @@
+import express from "express";
+import sanitizeHtml from "sanitize-html";
+
+const createEmailRouter = (resend, redis) => {
+  const router = express.Router();
+
+  const OTP_TTL_SECONDS = Number(process.env.OTP_TTL_SECONDS) || 600; // 10 minutes
+  const COOLDOWN_SECONDS = Number(process.env.OTP_COOLDOWN_SECONDS) || 60; // 60s
+  const MAX_VERIFY_ATTEMPTS = Number(process.env.MAX_VERIFY_ATTEMPTS) || 5;
+  const RESEND_OTP_FROM = process.env.FROM_VERIFY || "verify@mail.sakhiledumisa.com";
+
+  const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+
+  // Welcome email endpoint
+  router.post("/api/send-email", async (req, res) => {
+    try {
+      const { to, userName, sentBy, message, from = "form@mail.sakhiledumisa.com" } = req.body;
+
+      // Input validation
+      if (!to || !userName || !sentBy || !message) {
+        return res.status(400).json({ error: "Missing required fields: to, userName, sentBy, and message" });
+      }
+
+      // Validate email formats
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(to)) {
+        return res.status(400).json({ error: "Invalid recipient (to) email format" });
+      }
+      if (!emailRegex.test(sentBy)) {
+        return res.status(400).json({ error: "Invalid sender (sentBy) email format" });
+      }
+
+      // Validate from address (Resend only allows your verified from address)
+      if (from !== "form@mail.sakhiledumisa.com") {
+        return res.status(400).json({ error: "Invalid from address" });
+      }
+
+      // Ensure sentBy (user email) has been verified via OTP before sending contact email
+      if (!verifiedEmails.has(sentBy)) {
+        return res.status(403).json({ error: "Sender email not verified. Please verify via OTP before sending messages." });
+      }
+
+
+      if (!resend) {
+        throw new Error("Resend client not initialized");
+      }
+
+      // If redis client wasn't injected, warn and proceed with in-memory verification fallback
+      if (!redis) {
+        console.warn('Redis client not provided — verification checks will be skipped (insecure).');
+      } else {
+        const verifiedKey = `verified:${sentBy}`;
+        const isVerified = await redis.get(verifiedKey);
+        if (!isVerified) {
+          return res.status(403).json({ error: "Sender email not verified. Please verify via OTP before sending messages." });
+        }
+      }
+
+      // Sanitize inputs for safety (message should be plain text)
+      const cleanUserName = sanitizeHtml(userName, { allowedTags: [], allowedAttributes: {} }).trim();
+      const cleanMessage = sanitizeHtml(message, { allowedTags: [], allowedAttributes: {} }).trim();
+
+      const subject = `New contact form message from ${cleanUserName}`;
+      const textBody = `You have received a new message via the contact form from ${cleanUserName} <${sentBy}>:\n\n${cleanMessage}\n\nReply to: ${sentBy}`;
+
+      // Send plain-text email using Resend and set reply_to to the user's email
+      const data = await resend.emails.send({
+        from,
+        to,
+        subject,
+        text: textBody,
+        reply_to: sentBy,
+      });
+
+      res.status(200).json({ message: "Email sent successfully", data });
+    } catch (error) {
+      console.error("Error sending email:", error.message);
+      res
+        .status(error.statusCode || 500)
+        .json({ error: error.message || "Something went wrong!" });
+    }
+  });
+
+  // Send OTP to an email for verification
+  router.post("/api/send-otp", async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email) return res.status(400).json({ error: "Missing email" });
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) return res.status(400).json({ error: "Invalid email format" });
+
+      if (!resend) throw new Error("Resend client not initialized");
+
+      // If no redis, fallback to a temporary in-memory cooldown (not recommended)
+      if (!redis) {
+        // generate and send without storing verification state
+        const code = generateOtp();
+        const text = `Your verification code is: ${code}\n\nThis code expires in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.`;
+        const data = await resend.emails.send({ from: RESEND_OTP_FROM, to: email, subject: "Your verification code", text });
+        return res.status(200).json({ message: "OTP sent (no redis)" , data, code });
+      }
+
+      const cooldownKey = `otp-cooldown:${email}`;
+      const cooldownSet = await redis.set(cooldownKey, '1', { NX: true, EX: COOLDOWN_SECONDS });
+      if (!cooldownSet) {
+        return res.status(429).json({ error: `Please wait before requesting another code.` });
+      }
+
+      const code = generateOtp();
+      const otpKey = `otp:${email}`;
+      await redis.set(otpKey, code, { EX: OTP_TTL_SECONDS });
+      // reset attempt counter
+      const attemptsKey = `otp-attempts:${email}`;
+      await redis.del(attemptsKey);
+
+      const text = `Your verification code is: ${code}\n\nThis code expires in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.`;
+      const data = await resend.emails.send({ from: RESEND_OTP_FROM, to: email, subject: "Your verification code", text });
+
+      res.status(200).json({ message: "OTP sent", data });
+    } catch (error) {
+      console.error("Error sending OTP:", error.message);
+      res.status(error.statusCode || 500).json({ error: error.message || "Something went wrong sending OTP" });
+    }
+  });
+
+  // Verify an OTP for an email
+  router.post("/api/verify-otp", async (req, res) => {
+    try {
+      const { email, code } = req.body;
+      if (!email || !code) return res.status(400).json({ error: "Missing email or code" });
+
+      if (!redis) {
+        return res.status(500).json({ error: "Redis not configured for verification" });
+      }
+
+      const otpKey = `otp:${email}`;
+      const stored = await redis.get(otpKey);
+      if (!stored) return res.status(400).json({ error: "No OTP requested or it expired" });
+
+      const attemptsKey = `otp-attempts:${email}`;
+      const attempts = await redis.incr(attemptsKey);
+      if (attempts === 1) {
+        await redis.expire(attemptsKey, OTP_TTL_SECONDS);
+      }
+      if (attempts > MAX_VERIFY_ATTEMPTS) {
+        return res.status(429).json({ error: "Too many attempts, please request a new code." });
+      }
+
+      if (stored !== String(code).trim()) {
+        return res.status(400).json({ error: "Invalid OTP" });
+      }
+
+      // success: mark verified and cleanup
+      await redis.del(otpKey);
+      await redis.del(attemptsKey);
+      await redis.set(`verified:${email}`, '1');
+
+      res.status(200).json({ message: "Email verified" });
+    } catch (error) {
+      console.error("Error verifying OTP:", error.message);
+      res.status(500).json({ error: "Something went wrong verifying OTP" });
+    }
+  });
+
+  return router;
+};
+
+export default createEmailRouter;
