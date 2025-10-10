@@ -276,18 +276,18 @@ const createEmailRouter = (resend, redis) => {
         const data = await resend.emails.send({
           from: RESEND_OTP_FROM,
           to: email,
-          subject: "Your verification code",
+          subject: "Email verification code",
           text,
           html : `<!doctype html>
 <html>
   <body>
     <div
-      style='background-color:#000000;color:#FFFFFF;font-family:"Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
+      style='background-color:#ffffff;color:#FFFFFF;font-family:"Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
     >
       <table
         align="center"
         width="100%"
-        style="margin:0 auto;max-width:600px;background-color:#000000"
+        style="margin:0 auto;max-width:600px;background-color:#ffffff"
         role="presentation"
         cellspacing="0"
         cellpadding="0"
@@ -309,19 +309,20 @@ const createEmailRouter = (resend, redis) => {
                 /></a>
               </div>
               <div
-                style='color:#ffffff;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
+                style='color:#000000;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
                 Here is your one-time passcode:
               </div>
               <h1
-                style='font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
+                style='color:#000000;font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
               >
                 ${code}
               </h1>
               <div
                 style='color:#868686;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
-                This code will expire in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.
+                This code will expire in ${Math.floor(OTP_TTL_SECONDS / 60)}
+                minutes.
               </div>
               <div
                 style='color:#868686;font-size:14px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
@@ -351,17 +352,17 @@ const createEmailRouter = (resend, redis) => {
       const attemptsKey = `otp-attempts:${email}`;
       await redis.del(attemptsKey);
 
-      const text = `Your verification code is: ${code}\n\nThis code expires in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.`;
+      const text = `Email verification code is: ${code}\n\nThis code expires in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.`;
       const html = `<!doctype html>
 <html>
   <body>
     <div
-      style='background-color:#000000;color:#FFFFFF;font-family:"Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
+      style='background-color:#ffffff;color:#FFFFFF;font-family:"Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
     >
       <table
         align="center"
         width="100%"
-        style="margin:0 auto;max-width:600px;background-color:#000000"
+        style="margin:0 auto;max-width:600px;background-color:#ffffff"
         role="presentation"
         cellspacing="0"
         cellpadding="0"
@@ -383,19 +384,20 @@ const createEmailRouter = (resend, redis) => {
                 /></a>
               </div>
               <div
-                style='color:#ffffff;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
+                style='color:#000000;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
                 Here is your one-time passcode:
               </div>
               <h1
-                style='font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
+                style='color:#000000;font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
               >
                 ${code}
               </h1>
               <div
                 style='color:#868686;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
-                This code will expire in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.
+                This code will expire in ${Math.floor(OTP_TTL_SECONDS / 60)}
+                minutes.
               </div>
               <div
                 style='color:#868686;font-size:14px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
@@ -409,7 +411,7 @@ const createEmailRouter = (resend, redis) => {
     </div>
   </body>
 </html>`;
-      const data = await resend.emails.send({ from: RESEND_OTP_FROM, to: email, subject: "Your verification code", text, html });
+      const data = await resend.emails.send({ from: RESEND_OTP_FROM, to: email, subject: "Email verification code", text, html });
 
       res.status(200).json({ message: "OTP sent", data });
     } catch (error) {
