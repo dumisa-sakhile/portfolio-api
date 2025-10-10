@@ -282,12 +282,12 @@ const createEmailRouter = (resend, redis) => {
 <html>
   <body>
     <div
-      style='background-color:#FAFAFA;color:#FFFFFF;font-family:"Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
+      style='background-color:#000000;color:#FFFFFF;font-family:"Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
     >
       <table
         align="center"
         width="100%"
-        style="margin:0 auto;max-width:600px;background-color:#FAFAFA;border-radius:12px"
+        style="margin:0 auto;max-width:600px;background-color:#000000"
         role="presentation"
         cellspacing="0"
         cellpadding="0"
@@ -297,33 +297,36 @@ const createEmailRouter = (resend, redis) => {
           <tr style="width:100%">
             <td>
               <div style="padding:24px 24px 24px 24px;text-align:center">
-                <img
-                  alt=""
-                  src="https://www.sakhiledumisa.com/favicon.ico"
-                  height="24"
-                  style="height:24px;outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%"
-                />
+                <a
+                  href="https://www.sakhiledumisa.com/"
+                  style="text-decoration:none"
+                  target="_blank"
+                  ><img
+                    alt=""
+                    src="https://www.sakhiledumisa.com/favicon.ico"
+                    height="24"
+                    style="height:24px;outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%"
+                /></a>
               </div>
               <div
-                style='color:#000000;font-size:16px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
+                style='color:#ffffff;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
                 Here is your one-time passcode:
               </div>
               <h1
-                style='color:#000000;font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
+                style='font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
               >
                 ${code}
               </h1>
               <div
-                style='color:#868686;font-size:16px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
+                style='color:#868686;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
                 This code will expire in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.
               </div>
               <div
-                style='color:#000000;font-size:14px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
+                style='color:#868686;font-size:14px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
-                Problems? Email hello@sakhiledumisa.com. If you did not initiate
-                this activity, please ignore this email.
+                If you did not initiate this activity, please ignore this email.
               </div>
             </td>
           </tr>
@@ -353,12 +356,12 @@ const createEmailRouter = (resend, redis) => {
 <html>
   <body>
     <div
-      style='background-color:#FAFAFA;color:#FFFFFF;font-family:"Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
+      style='background-color:#000000;color:#FFFFFF;font-family:"Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
     >
       <table
         align="center"
         width="100%"
-        style="margin:0 auto;max-width:600px;background-color:#FAFAFA;border-radius:12px"
+        style="margin:0 auto;max-width:600px;background-color:#000000"
         role="presentation"
         cellspacing="0"
         cellpadding="0"
@@ -368,33 +371,36 @@ const createEmailRouter = (resend, redis) => {
           <tr style="width:100%">
             <td>
               <div style="padding:24px 24px 24px 24px;text-align:center">
-                <img
-                  alt=""
-                  src="https://www.sakhiledumisa.com/favicon.ico"
-                  height="24"
-                  style="height:24px;outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%"
-                />
+                <a
+                  href="https://www.sakhiledumisa.com/"
+                  style="text-decoration:none"
+                  target="_blank"
+                  ><img
+                    alt=""
+                    src="https://www.sakhiledumisa.com/favicon.ico"
+                    height="24"
+                    style="height:24px;outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%"
+                /></a>
               </div>
               <div
-                style='color:#000000;font-size:16px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
+                style='color:#ffffff;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
                 Here is your one-time passcode:
               </div>
               <h1
-                style='color:#000000;font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
+                style='font-weight:bold;text-align:center;margin:0;font-family:"Nimbus Mono PS", "Courier New", "Cutive Mono", monospace;font-size:32px;padding:16px 24px 16px 24px'
               >
                 ${code}
               </h1>
               <div
-                style='color:#868686;font-size:16px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
+                style='color:#868686;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
                 This code will expire in ${Math.floor(OTP_TTL_SECONDS / 60)} minutes.
               </div>
               <div
-                style='color:#000000;font-size:14px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
+                style='color:#868686;font-size:14px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:center;padding:16px 24px 16px 24px'
               >
-                Problems? Email hello@sakhiledumisa.com. If you did not initiate
-                this activity, please ignore this email.
+                If you did not initiate this activity, please ignore this email.
               </div>
             </td>
           </tr>
