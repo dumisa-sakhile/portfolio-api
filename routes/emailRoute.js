@@ -19,6 +19,21 @@ const createEmailRouter = (resend, redis) => {
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
 
+  // Convert a name like "tina angel" or "TINA angel" into "Tina Angel"
+  const titleCase = (input = '') => {
+    return String(input)
+      .trim()
+      .split(/\s+/)
+      .map(word => {
+        // keep single-letter words uppercase (e.g., 'a', 'i') and preserve common hyphenated parts
+        return word
+          .split(/-/g)
+          .map(part => (part ? part.charAt(0).toUpperCase() + part.slice(1).toLowerCase() : part))
+          .join('-');
+      })
+      .join(' ');
+  };
+
 
   
   router.post("/api/send-email", async (req, res) => {
@@ -64,15 +79,16 @@ const createEmailRouter = (resend, redis) => {
 
       // Sanitize inputs for safety (message should be plain text)
   const cleanUserName = sanitizeHtml(userName, { allowedTags: [], allowedAttributes: {} }).trim();
+  const titledUserName = titleCase(cleanUserName);
   const cleanMessage = sanitizeHtml(message, { allowedTags: [], allowedAttributes: {} }).trim();
   const cleanSentBy = sanitizeHtml(sentBy, { allowedTags: [], allowedAttributes: {} }).trim();
 
   // escape for safe HTML embedding
-  const escapedUserName = escapeHtml(cleanUserName);
+  const escapedUserName = escapeHtml(titledUserName);
   const escapedSentBy = escapeHtml(cleanSentBy);
 
-      const subject = `New contact form message from ${cleanUserName}`;
-      const textBody = `You have received a new message via the contact form from ${cleanUserName} <${sentBy}>:\n\n${cleanMessage}\n\nReply to: ${sentBy}`;
+  const subject = `New contact form message from ${titledUserName}`;
+  const textBody = `You have received a new message via the contact form from ${titledUserName} <${sentBy}>:\n\n${cleanMessage}\n\nReply to: ${sentBy}`;
 
       // Build a simple HTML email (sanitize and preserve line breaks)
       const htmlMessage = escapeHtml(cleanMessage).replace(/\r\n|\r|\n/g, '<br>');
@@ -82,7 +98,7 @@ const createEmailRouter = (resend, redis) => {
 <html>
   <body>
     <div
-      style='background-color:#FFFFFF;color:#333333;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
+      style='background-color:#FFFFFF;color:#333333;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
     >
       <table
         align="center"
@@ -133,7 +149,7 @@ const createEmailRouter = (resend, redis) => {
                 </table>
               </div>
               <div
-                style='color:#404040;font-size:16px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:left;padding:16px 24px 16px 24px'
+                style='color:#404040;font-size:16px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:left;padding:16px 24px 16px 24px'
               >
                 ${htmlMessage}
               </div>
@@ -143,13 +159,9 @@ const createEmailRouter = (resend, redis) => {
                 />
               </div>
               <div
-                style='font-size:14px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:left;padding:16px 24px 16px 24px'
+                style='font-size:14px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:left;padding:16px 24px 16px 24px'
               >
-                <a
-                  href="mailto:${escapedSentBy}"
-                  style="text-decoration:none"
-                  target="_blank"
-                  >${escapedSentBy}</a>
+                ${escapedSentBy} has messaged you.
               </div>
             </td>
           </tr>
@@ -171,8 +183,8 @@ const createEmailRouter = (resend, redis) => {
 
       // After successfully sending the contact email, send a thank-you email to the user
       const thankFrom = process.env.FROM_CONTACT || from;
-      const thankSubject = `Thanks for your message, ${cleanUserName}`;
-      const thankText = `Hi ${cleanUserName},\n\nThanks for reaching out — we've received your message and will get back to you shortly.\n\nReply to: ${to}`;
+  const thankSubject = `Thanks for your message, ${titledUserName}`;
+  const thankText = `Hi ${titledUserName},\n\nThanks for reaching out — we've received your message and will get back to you shortly.\n\nReply to: ${to}`;
       const thankHtml = `<!doctype html>
 <html>
   <body>
