@@ -94,81 +94,165 @@ const createEmailRouter = (resend, redis) => {
       const htmlMessage = escapeHtml(cleanMessage).replace(/\r\n|\r|\n/g, '<br>');
 
       const html = `
-       <!doctype html>
-<html>
-  <body>
-    <div
-      style='background-color:#FFFFFF;color:#333333;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
-    >
-      <table
-        align="center"
-        width="100%"
-        style="margin:0 auto;max-width:600px;background-color:#FFFFFF"
-        role="presentation"
-        cellspacing="0"
-        cellpadding="0"
-        border="0"
-      >
-        <tbody>
-          <tr style="width:100%">
-            <td>
-              <div style="padding:16px 24px 24px 24px">
-                <table
-                  align="center"
-                  width="100%"
-                  cellpadding="0"
-                  border="0"
-                  style="table-layout:fixed;border-collapse:collapse"
-                >
-                  <tbody style="width:100%">
-                    <tr style="width:100%">
-                      <td
-                        style="box-sizing:content-box;vertical-align:middle;padding-left:0;padding-right:0"
-                      >
-                        <div style="padding:0px 0px 0px 0px">
-                          <h2
-                            style='font-weight:normal;text-align:left;margin:0;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-size:24px;padding:0px 0px 0px 0px'
-                          >
-                            ${escapedUserName}
-                          </h2>
-                        </div>
-                      </td>
-                      <td
-                        style="box-sizing:content-box;vertical-align:middle;padding-left:0;padding-right:0"
-                      >
-                        <div style="padding:0px 0px 0px 0px">
-                          <div
-                            style='color:#808080;font-size:14px;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-weight:normal;text-align:right;padding:0px 0px 0px 0px'
-                          >
-                            ${new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div
-                style='color:#404040;font-size:16px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:left;padding:16px 24px 16px 24px'
-              >
-                ${htmlMessage}
-              </div>
-              <div style="padding:16px 0px 16px 0px">
-                <hr
-                  style="width:100%;border:none;border-top:1px solid #EEEEEE;margin:0"
-                />
-              </div>
-              <div
-                style='font-size:14px;font-family:Bahnschrift, "DIN Alternate", "Franklin Gothic Medium", "Nimbus Sans Narrow", sans-serif-condensed, sans-serif;font-weight:normal;text-align:left;padding:16px 24px 16px 24px'
-              >
-                ${escapedSentBy} has messaged you.
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </body>
+       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+<head>
+<title></title>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!--[if !mso]>-->
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!--<![endif]-->
+<meta name="x-apple-disable-message-reformatting" content="" />
+<meta content="target-densitydpi=device-dpi" name="viewport" />
+<meta content="true" name="HandheldFriendly" />
+<meta content="width=device-width" name="viewport" />
+<meta name="format-detection" content="telephone=no, date=no, address=no, email=no, url=no" />
+<style type="text/css">
+table {
+border-collapse: separate;
+table-layout: fixed;
+mso-table-lspace: 0pt;
+mso-table-rspace: 0pt
+}
+table td {
+border-collapse: collapse
+}
+.ExternalClass {
+width: 100%
+}
+.ExternalClass,
+.ExternalClass p,
+.ExternalClass span,
+.ExternalClass font,
+.ExternalClass td,
+.ExternalClass div {
+line-height: 100%
+}
+body, a, li, p, h1, h2, h3 {
+-ms-text-size-adjust: 100%;
+-webkit-text-size-adjust: 100%;
+}
+html {
+-webkit-text-size-adjust: none !important
+}
+body {
+min-width: 100%;
+Margin: 0px;
+padding: 0px;
+}
+body, #innerTable {
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale
+}
+#innerTable img+div {
+display: none;
+display: none !important
+}
+img {
+Margin: 0;
+padding: 0;
+-ms-interpolation-mode: bicubic
+}
+h1, h2, h3, p, a {
+line-height: inherit;
+overflow-wrap: normal;
+white-space: normal;
+word-break: break-word
+}
+a {
+text-decoration: none
+}
+h1, h2, h3, p {
+min-width: 100%!important;
+width: 100%!important;
+max-width: 100%!important;
+display: inline-block!important;
+border: 0;
+padding: 0;
+margin: 0
+}
+a[x-apple-data-detectors] {
+color: inherit !important;
+text-decoration: none !important;
+font-size: inherit !important;
+font-family: inherit !important;
+font-weight: inherit !important;
+line-height: inherit !important
+}
+u + #body a {
+color: inherit;
+text-decoration: none;
+font-size: inherit;
+font-family: inherit;
+font-weight: inherit;
+line-height: inherit;
+}
+a[href^="mailto"],
+a[href^="tel"],
+a[href^="sms"] {
+color: inherit;
+text-decoration: none
+}
+</style>
+<style type="text/css">
+@media (min-width: 481px) {
+.hd { display: none!important }
+}
+</style>
+<style type="text/css">
+@media (max-width: 480px) {
+.hm { display: none!important }
+}
+</style>
+<style type="text/css">
+@media (max-width: 480px) {
+.t31,.t36{mso-line-height-alt:0px!important;line-height:0!important;display:none!important}.t32{padding-top:43px!important;border:0!important;border-radius:0!important}.t20{mso-line-height-alt:36px!important;line-height:36px!important}
+}
+</style>
+<!--[if !mso]>-->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Albert+Sans:wght@500&amp;display=swap" rel="stylesheet" type="text/css" />
+<!--<![endif]-->
+<!--[if mso]>
+<xml>
+<o:OfficeDocumentSettings>
+<o:AllowPNG/>
+<o:PixelsPerInch>96</o:PixelsPerInch>
+</o:OfficeDocumentSettings>
+</xml>
+<![endif]-->
+</head>
+<body id="body" class="t39" style="min-width:100%;Margin:0px;padding:0px;background-color:#FFFFFF;"><div class="t38" style="background-color:#FFFFFF;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td class="t37" style="font-size:0;line-height:0;mso-line-height-rule:exactly;background-color:#FFFFFF;background-image:none;background-repeat:repeat;background-size:auto;background-position:center top;" valign="top" align="center">
+<!--[if mso]>
+<v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false">
+<v:fill color="#FFFFFF"/>
+</v:background>
+<![endif]-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" align="center" id="innerTable"><tr><td><div class="t31" style="mso-line-height-rule:exactly;mso-line-height-alt:70px;line-height:70px;font-size:1px;display:block;">&nbsp;&nbsp;</div></td></tr><tr><td align="center">
+<table class="t35" role="presentation" cellpadding="0" cellspacing="0" style="Margin-left:auto;Margin-right:auto;"><tr><td width="400" class="t34" style="width:400px;">
+<table class="t33" role="presentation" cellpadding="0" cellspacing="0" width="100%" style="width:100%;"><tr><td class="t32" style="border:1px solid #CECECE;overflow:hidden;background-color:#FFFFFF;padding:50px 40px 40px 40px;border-radius:20px 20px 20px 20px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100% !important;"><tr><td><div class="t1" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;&nbsp;</div></td></tr><tr><td align="center">
+<table class="t5" role="presentation" cellpadding="0" cellspacing="0" style="Margin-left:auto;Margin-right:auto;"><tr><td width="30" class="t4" style="width:30px;">
+<table class="t3" role="presentation" cellpadding="0" cellspacing="0" width="100%" style="width:100%;"><tr><td class="t2"><a href="#" style="font-size:0px;" target="_blank"><img class="t0" style="display:block;border:0;height:auto;width:100%;Margin:0;max-width:100%;" width="30" height="30" alt="" src="https://www.sakhiledumisa.com/favicon.ico"/></a></td></tr></table>
+</td></tr></table>
+</td></tr><tr><td><div class="t6" style="mso-line-height-rule:exactly;mso-line-height-alt:40px;line-height:40px;font-size:1px;display:block;">&nbsp;&nbsp;</div></td></tr><tr><td><div class="t8" style="mso-line-height-rule:exactly;mso-line-height-alt:10px;line-height:10px;font-size:1px;display:block;">&nbsp;&nbsp;</div></td></tr><tr><td align="center">
+<table class="t12" role="presentation" cellpadding="0" cellspacing="0" style="Margin-left:auto;Margin-right:auto;"><tr><td width="318" class="t11" style="width:339px;">
+<table class="t10" role="presentation" cellpadding="0" cellspacing="0" width="100%" style="width:100%;"><tr><td class="t9"><h1 class="t7" style="margin:0;Margin:0;font-family:Inter,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:28px;font-weight:600;font-style:normal;font-size:24px;text-decoration:none;text-transform:none;letter-spacing:-1.2px;direction:ltr;color:#111111;text-align:center;mso-line-height-rule:exactly;mso-text-raise:1px;">Message from ${escapedUserName}</h1></td></tr></table>
+</td></tr></table>
+</td></tr><tr><td><div class="t14" style="mso-line-height-rule:exactly;mso-line-height-alt:27px;line-height:27px;font-size:1px;display:block;">&nbsp;&nbsp;</div></td></tr><tr><td align="center">
+<table class="t18" role="presentation" cellpadding="0" cellspacing="0" style="Margin-left:auto;Margin-right:auto;"><tr><td width="308" class="t17" style="width:308px;">
+<table class="t16" role="presentation" cellpadding="0" cellspacing="0" width="100%" style="width:100%;"><tr><td class="t15"><p class="t13" style="margin:0;Margin:0;font-family:Inter,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:500;font-style:normal;font-size:15px;text-decoration:none;text-transform:none;letter-spacing:-0.6px;direction:ltr;color:#424040;text-align:center;mso-line-height-rule:exactly;mso-text-raise:2px;">You have received a new form submission</p></td></tr></table>
+</td></tr></table>
+</td></tr><tr><td><div class="t20" style="mso-line-height-rule:exactly;mso-line-height-alt:40px;line-height:40px;font-size:1px;display:block;">&nbsp;&nbsp;</div></td></tr><tr><td align="center">
+<table class="t24" role="presentation" cellpadding="0" cellspacing="0" style="Margin-left:auto;Margin-right:auto;"><tr><td width="318" class="t23" style="width:420px;">
+<table class="t22" role="presentation" cellpadding="0" cellspacing="0" width="100%" style="width:100%;"><tr><td class="t21" style="overflow:hidden;background-color:#F2EFF3;padding:20px 30px 20px 30px;border-radius:8px 8px 8px 8px;"><p class="t19" style="margin:0;Margin:0;font-family:Albert Sans,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:18px;font-weight:500;font-style:normal;font-size:12px;text-decoration:none;text-transform:none;direction:ltr;color:#84828E;text-align:center;mso-line-height-rule:exactly;mso-text-raise:2px;">${htmlMessage}</p></td></tr></table>
+</td></tr></table>
+</td></tr><tr><td><div class="t26" style="mso-line-height-rule:exactly;mso-line-height-alt:50px;line-height:50px;font-size:1px;display:block;">&nbsp;&nbsp;</div></td></tr><tr><td align="center">
+<table class="t30" role="presentation" cellpadding="0" cellspacing="0" style="Margin-left:auto;Margin-right:auto;"><tr><td width="154" class="t29" style="width:154px;">
+<table class="t28" role="presentation" cellpadding="0" cellspacing="0" width="100%" style="width:100%;"><tr><td class="t27" style="overflow:hidden;background-color:#111111;text-align:center;line-height:40px;mso-line-height-rule:exactly;mso-text-raise:8px;border-radius:8px 8px 8px 8px;"><a class="t25" href='mailto:${escapedSentBy}' style="display:block;margin:0;Margin:0;font-family:Inter,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:40px;font-weight:400;font-style:normal;font-size:15px;text-decoration:none;letter-spacing:-0.5px;direction:ltr;color:#FFFFFF;text-align:center;mso-line-height-rule:exactly;mso-text-raise:8px;" target="_blank">Email Back</a></td></tr></table>
+</td></tr></table>
+</td></tr></table></td></tr></table>
+</td></tr></table>
+</td></tr><tr><td><div class="t36" style="mso-line-height-rule:exactly;mso-line-height-alt:70px;line-height:70px;font-size:1px;display:block;">&nbsp;&nbsp;</div></td></tr></table></td></tr></table></div><div class="gmail-fix" style="display: none; white-space: nowrap; font: 15px courier; line-height: 0;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div></body>
 </html>`;
 
       // Send HTML + plain-text email using Resend and set reply_to to the user's email
