@@ -183,11 +183,3 @@ Client UI suggestions:
 - `routes/emailRoute.js` — OTP and email sending logic, templates
 - `.env` — environment variables (example values in repo)
 
----
-
-If you'd like, I can add:
-- `.env.example` (sanitized template)
-- A tiny proxy script for browser-safe calls
-- Unit tests for the OTP lifecycle
-
-Pull requests and issues are welcome — tell me which additions you want and I'll implement them.
